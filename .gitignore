@@ -1,41 +1,50 @@
-# Prerequisites
-*.d
+cat <<EOF > .gitignore
+# --- AetherShell: Specific NDS/Python Rules ---
+build/
+*.elf
+*.nds
+*.map
+*.lst
+*.ds.gba
+template.elf
+wifi01.elf
 
-# Compiled Object files
+dsenv/
+__pycache__/
+*.py[cod]
+.env
+
+.DS_Store
+Thumbs.db
+
+# --- Compiler & Build Prerequisites ---
+*.d
 *.slo
 *.lo
 *.o
 *.obj
 
-# Precompiled Headers
+# --- Precompiled Headers & Linker Files ---
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
 
-# Compiled Dynamic libraries
+# --- Compiled Libraries & Executables ---
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
+!nflib/lib/libnflib.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
 
-# debug information files
+# --- Debug & Fortran Files ---
+*.mod
+*.smod
 *.dwo
+EOF
