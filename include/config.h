@@ -8,7 +8,7 @@ struct AppConfig {
     int port;
 };
 
-// Initializes FAT and reads .env from the root
+// Initializes FAT and reads config.txt from the root
 bool loadConfig(AppConfig &config);
 
 #endif 
