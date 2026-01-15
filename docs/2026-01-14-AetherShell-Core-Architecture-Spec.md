@@ -29,44 +29,7 @@ AetherShell is a multi-tiered communication platform bridging legacy handheld ha
 
 ---
 
-## 3. Visual Architecture Map
-
-╔════════════════════════════════════════════════════════════════════════════════════════╗
-║ AETHERSHELL SYSTEM BOUNDARY ║
-╠════════════════════════════════════════════════════════════════════════════════════════╣
-║ [ EXTERNAL DEVICES ] [ MIDDLEMAN LAYER ] [ INTERNAL BACKEND (YOUR PC) ]║
-║ ║
-║ ┌────────────────┐ ┌───────────────────┐ ┌───────────────────────┐ ║
-║ │ NINTENDO DS │ │ MIDDLEMAN #1 │ │ SPRING BOOT HUB │ ║
-║ │ (ARM9 / C++) │──HTTP──>│ NGROK │──HTTP────>│ (Java / 8080) │ ║
-║ └────────────────┘ │ (Pass-thru/Tunnel)│ │ - Session Manager │ ║
-║ └───────────────────┘ │ - Command Parser │ ║
-║ └─────┬───────────┬─────┘ ║
-║ ┌────────────────┐ ┌───────────────────┐ │ │ ║
-║ │ IPHONE │ │ MIDDLEMAN #2 │ │ │ ║
-║ │ (iOS / Swift) │──HTTPS─>│ CLOUDFLARE │──HTTP──────────>┤ │(Local ║
-║ └────────────────┘ │ (SSL Terminator) │ │ │ HTTP) ║
-║ └───────────────────┘ │ │ ║
-║ v v ║
-║ ┌──────────┐┌─────────┐ ║
-║ │ POSTGRES ││ FLASK │ ║
-║ │ DB ││ API │ ║
-║ └──────────┘└────┬────┘ ║
-║ │ ║
-║ │ ║
-║ (HTTPS CALL) ║
-║ │ ║
-║ v ║
-║ ┌───────────────────────┐ ║
-║ │ GEMINI API │ ║
-║ │ (The LLM Brain) │ ║
-║ │ - Direct Connection │ ║
-║ └───────────────────────┘ ║
-╚════════════════════════════════════════════════════════════════════════════════════════╝
-
----
-
-## 4. Communication Logic Flow
+## 3. Communication Logic Flow
 
 1. **Ingress:** Data enters from External Devices through the Middlemen. Middlemen strip SSL/Tunnels and deliver standardized HTTP packets to Spring Boot on Port 8080.
 2. **Persistence:** Spring Boot commits the raw event to **PostgreSQL**.
@@ -75,7 +38,7 @@ AetherShell is a multi-tiered communication platform bridging legacy handheld ha
 
 ---
 
-## 5. Port Configuration Matrix
+## 4. Port Configuration Matrix
 
 | Service            | Protocol | Port           | Destination               |
 | :----------------- | :------- | :------------- | :------------------------ |
