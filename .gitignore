@@ -121,5 +121,82 @@ build/
 # Logs
 *.log
 
+# --- SENSITIVE DATA (THE MOST IMPORTANT PART) ---
+.env
+config.txt
+settings.txt
+*.p12
+*.cer
+*.mobileprovision
+secrets/
+credentials.json
+
+# --- JAVA / SPRING BOOT ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+.mtj.tmp/
+.classpath
+.project
+.settings/
+bin/
+
+# --- PYTHON / FLASK ---
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- IOS / SWIFT (XCODE) ---
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+
+# --- OS / IDE STUFF ---
+.DS_Store
+.idea/
+*.iml
+*.vscode/
+*.swp
+*.swo
+
+
 
 EOF
