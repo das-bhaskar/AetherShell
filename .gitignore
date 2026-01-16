@@ -92,4 +92,34 @@ hub/src/main/resources/static/output/*
 # Also ignore the build target outputs
 hub/target/classes/static/output/*
 
+# Xcode
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+*.moved-aside
+*.xcscmblueprint
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+Packages/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+
+# Derived data
+DerivedData/
+build/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Caches
+*.xcuserdatad/ 
+*.idea/
+*.DS_Store
+
+# Logs
+*.log
+
+
 EOF
