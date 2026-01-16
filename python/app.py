@@ -27,7 +27,9 @@ def process():
     try:
         # 1. Render all frames → returns list of PNG filenames
         filenames = draw_frame(session_id, frames, OUTPUT_DIR, scale=8)
+        print(f"DEBUG: Filenames being sent to Java: {filenames}")
 
+        
         if not filenames:
             return jsonify({"error": "No frames rendered"}), 500
 

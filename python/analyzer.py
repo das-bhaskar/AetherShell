@@ -44,6 +44,7 @@ LABELS = {
     "H": "car",
     "I": "flower",
     "J": "face",
+    "K": "unknown"
 }
 
 
@@ -54,7 +55,7 @@ LABELS = {
 def analyze_with_gemini(image_path: str) -> str:
     """
     Sends exactly one PNG image to Gemini and returns
-    a single-letter classification (A–J) or '?' on failure.
+    a single-letter classification (A–K) or '?' on failure.
     """
 
     if not client:
@@ -80,6 +81,7 @@ def analyze_with_gemini(image_path: str) -> str:
             "H. car\n"
             "I. flower\n"
             "J. face\n"
+            "K. unknown\n\n"
         )
 
         response = client.models.generate_content(
