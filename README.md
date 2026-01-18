@@ -2,8 +2,11 @@
 
 **The first ever bridge between the Nintendo DSi and Augmented Reality.**
 
-AetherShell is an open-source platform that brings your Nintendo DSi sketches to life. By connecting 20-year-old handheld hardware to a modern app, your drawings are interpreted, animated, and projected into your physical space using AR.
+AetherShell is an open-source platform that brings your Nintendo DSi sketches to life over the internet. 
+By connecting 20-year-old handheld hardware to a modern app, your drawings are interpreted, animated, made to dance & projected into your physical space using AR.
 
+---
+*AetherShell is an unofficial fan project. Please read the [Legal Disclaimer](DISCLAIMER.md) regarding third-party tools and Nintendo trademarks.*
 ---
 
 ## Get Started Now
