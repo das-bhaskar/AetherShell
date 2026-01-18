@@ -44,7 +44,7 @@ Note: As the project maintainer, I manually review and approve all merges into t
 ---
 
 ## Community and Support
-Have questions or want to show off your AR creations? Join our community:
+Have questions or want to share feedback? Please connect:
 * [**GitHub Discussions**](https://github.com/das-bhaskar/aethershell/discussions) - Ask questions and share ideas.
 * [**Issues**](https://github.com/das-bhaskar/aethershell/issues) - Report bugs or request features.
 
