@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
 
 @RestController
 @RequestMapping("/session")
@@ -30,63 +31,119 @@ public class DsController {
     private volatile String currentSessionId = null;
 
     @PostConstruct
-    public void initTunnel() {
-        Thread tunnelThread = new Thread(() -> {
+    public void initHub() {
+        System.out.println("\n--- AETHERSHELL HUB STARTING ---");
+
+        // 1. Setup Python Sandbox & Run Worker (Safe for Users)
+        setupAndRunPython();
+
+        // 2. Launch Tunnels (Handles local binaries or system brew)
+        startTunnel("cloudflared", "tunnel", "--url", "http://localhost:8443");
+        startTunnel("ngrok", "http", "8080", "--scheme", "http", "--log=stdout");    }
+
+    private void setupAndRunPython() {
+        new Thread(() -> {
             try {
-                System.out.println("AetherShell: Launching background tunnel...");
-                // Note: Make sure no other 'cloudflared' is running in separate terminals
-                ProcessBuilder pb = new ProcessBuilder("cloudflared", "tunnel", "--url", "http://localhost:8443");
+                String root = System.getProperty("user.dir");
+                File venvDir = new File(root, "venv");
+                String pipPath = root + "/venv/bin/pip3";
+                String pythonPath = root + "/venv/bin/python3";
+                // This points to the requirements.txt in your hub folder
+                String requirementsPath = root + "/requirements.txt";
+
+                if (!venvDir.exists()) {
+                    System.out.println("[SYSTEM] Creating private Python sandbox (venv)...");
+                    new ProcessBuilder("python3", "-m", "venv", "venv").inheritIO().start().waitFor();
+
+                    System.out.println("[SYSTEM] Installing dependencies from requirements.txt...");
+                    // Use the -r flag to install everything in your text file at once
+                    new ProcessBuilder(pipPath, "install", "-r", requirementsPath)
+                            .inheritIO()
+                            .start()
+                            .waitFor();
+                }
+
+                System.out.println("[SYSTEM] Starting Python Worker from sandbox...");
+                ProcessBuilder pb = new ProcessBuilder(pythonPath, "app.py");
+                pb.inheritIO();
+                pb.start();
+            } catch (Exception e) {
+                System.err.println("[ERROR] Python Sandbox Failed: " + e.getMessage());
+            }
+        }).start();}
+
+    private void startTunnel(String binName, String... args) {
+        new Thread(() -> {
+            try {
+                // Portable logic: use ./bin if present (User mode), else use system bin (Dev mode)
+                File localBin = new File(System.getProperty("user.dir") + "/" + binName);
+                String commandToRun = localBin.exists() ? "./" + binName : binName;
+
+                List<String> command = new ArrayList<>();
+                command.add(commandToRun);
+                command.addAll(Arrays.asList(args));
+
+                ProcessBuilder pb = new ProcessBuilder(command);
                 pb.redirectErrorStream(true);
                 Process process = pb.start();
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
-                Pattern pattern = Pattern.compile("https://[a-zA-Z0-9-]+\\.trycloudflare\\.com");
+
+                // Matches http or https for Cloudflare and Ngrok
+                Pattern pattern = Pattern.compile("http(s)?://[a-zA-Z0-9.-]+\\.(trycloudflare\\.com|ngrok-free\\.app)");
 
                 while ((line = reader.readLine()) != null) {
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find()) {
-                        printQRCode(matcher.group());
+                        String url = matcher.group();
+                        if (url.contains("cloudflare")) {
+                            printQRCode(url);
+                        } else if (url.contains("ngrok")) {
+                            printDsConfig(url);
+                        }
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Tunnel Auto-Start Failed: " + e.getMessage());
+                System.err.println("[ERROR] " + binName + " Tunnel Failed: " + e.getMessage());
             }
-        });
-        tunnelThread.setDaemon(true);
-        tunnelThread.start();
+        }).start();
     }
 
     private void printQRCode(String url) {
         try {
-            // Strip the fat to keep the grid tiny
-            String middlePart = url.replace("https://", "").replace(".trycloudflare.com", "");
-
+            // Extraction logic for iPhone scan
+            String id = url.replace("https://", "").replace(".trycloudflare.com", "");
             Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-            hints.put(EncodeHintType.MARGIN, 1); // Small border helps camera focus
+            hints.put(EncodeHintType.MARGIN, 1);
 
-            BitMatrix matrix = new MultiFormatWriter().encode(middlePart, BarcodeFormat.QR_CODE, 0, 0, hints);
-            int width = matrix.getWidth();
-            int height = matrix.getHeight();
+            BitMatrix matrix = new MultiFormatWriter().encode(id, BarcodeFormat.QR_CODE, 0, 0, hints);
 
-            System.out.println("\n--- TIGHT SCAN (AETHERSHELL) ---");
-
-            for (int y = 0; y < height; y++) {
-                StringBuilder sb = new StringBuilder("        ");
-                for (int x = 0; x < width; x++) {
-                    // Using TWO blocks with NO extra space creates a solid pixel
+            System.out.println("\n[ SCAN FOR IPHONE ]");
+            for (int y = 0; y < matrix.getHeight(); y++) {
+                StringBuilder sb = new StringBuilder("    ");
+                for (int x = 0; x < matrix.getWidth(); x++) {
                     sb.append(matrix.get(x, y) ? "██" : "  ");
                 }
                 System.out.println(sb.toString());
             }
-            System.out.println("\n    ID: " + middlePart);
-            System.out.println("    URL: " + url + "\n");
-
+            System.out.println("    ID: " + id);
+            System.out.println("    URL: " + url);
         } catch (Exception e) {
-            System.err.println("QR Error: " + e.getMessage());
+            System.err.println("QR Print Error: " + e.getMessage());
         }
+    }
+
+    private void printDsConfig(String url) {
+        String cleanUrl = url.replace("http://", "").replace("https://", "");
+        System.out.println("\n[ NDS SD CARD: config.txt PLEASE PASTE AS IS]");
+        System.out.println("--------------------------------");
+        System.out.println("SERVER_HOST=" + cleanUrl);
+        System.out.println("SCHEME=http");
+        System.out.println("SERVER_PORT=80");
+        System.out.println("--------------------------------");
     }
 
     @GetMapping("/latest")
@@ -99,13 +156,13 @@ public class DsController {
         clearOutputFolder();
         currentSessionId = UUID.randomUUID().toString().substring(0, 8);
         activeSessions.put(currentSessionId, new ArrayList<>());
-        System.out.println("\n[SYSTEM] New Session: " + currentSessionId);
+        System.out.println("\n[SESSION] New: " + currentSessionId);
         return currentSessionId;
     }
 
     @PostMapping("/frame")
     public String receiveFrame(@RequestBody String coordinateString) {
-        if (currentSessionId == null) return "Error";
+        if (currentSessionId == null) return "Error: No Session";
         activeSessions.get(currentSessionId).add(coordinateString.trim());
         return "Stored";
     }
@@ -126,15 +183,22 @@ public class DsController {
 
     private void clearOutputFolder() {
         try {
+            // This gets the folder where the JAR is currently sitting
             String rootPath = System.getProperty("user.dir");
-            String subPath = rootPath.endsWith("hub") ? "/src/main/resources/static/output/" : "/hub/src/main/resources/static/output/";
-            File outputDir = new File(rootPath + subPath);
-            if (outputDir.exists() && outputDir.isDirectory()) {
-                File[] files = outputDir.listFiles();
-                if (files != null) {
-                    for (File f : files) if (f.getName().endsWith(".png")) f.delete();
-                }
+
+            // We change this to a simple "static/output" folder next to the JAR
+            File outputDir = new File(rootPath + "/static/output/");
+
+            if (!outputDir.exists()) {
+                outputDir.mkdirs(); // Create it if it's missing
             }
-        } catch (Exception e) {}
+
+            File[] files = outputDir.listFiles();
+            if (files != null) {
+                for (File f : files) if (f.getName().endsWith(".png")) f.delete();
+            }
+        } catch (Exception e) {
+            System.err.println("Clear Folder Error: " + e.getMessage());
+        }
     }
 }

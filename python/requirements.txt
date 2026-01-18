@@ -1,5 +1,0 @@
-flask
-Pillow
-langchain
-langchain-openai
-python-dotenv
