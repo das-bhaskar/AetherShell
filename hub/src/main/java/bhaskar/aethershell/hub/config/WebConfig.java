@@ -11,29 +11,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 1. Get the current working directory
+
         String userDir = System.getProperty("user.dir");
+        String finalPath = "file:" + userDir + "/static/";
 
-        // 2. Logic to find the 'output' folder correctly
-        String path;
-        if (userDir.endsWith("hub")) {
-            path = userDir + "/src/main/resources/static/output/";
-        } else {
-            path = userDir + "/hub/src/main/resources/static/output/";
-        }
-
-        // 3. Ensure the string starts with 'file:' and ends with a slash
-        String finalPath = "file:" + path;
-
-        // This log will appear in your IntelliJ console.
-        // IMPORTANT: Copy this path and verify it exists on your Mac!
-        System.out.println("DEBUG: AetherShell is serving images from: " + finalPath);
+        System.out.println("SERVERSIDE CHECK: Serving images from: " + finalPath);
 
         registry.addResourceHandler("/output/**")
-                .addResourceLocations(finalPath)
-                .setCachePeriod(0); // This is vital for seeing new frames immediately
+                .addResourceLocations(finalPath + "output/")
+                .setCachePeriod(0);
     }
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
