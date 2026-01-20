@@ -20,7 +20,7 @@ The first stable release for macOS is now live.
 
 <p align="left">
   <a href="https://github.com/das-bhaskar/AetherShell/releases/tag/v1.0.2">
-    <img src="https://img.shields.io/badge/DOWNLOAD-AetherShell_v1.0.2-blue?style=for-the-badge&logo=github&logoColor=white" alt="Download AetherShell" height="50">
+    <img src="https://img.shields.io/badge/DOWNLOAD-AetherShell_v1.0.2_for_MacOS-blue?style=for-the-badge&logo=github&logoColor=white" alt="Download AetherShell" height="50">
   </a>
 </p>
 
