@@ -2,7 +2,7 @@
 
 **The first ever bridge between the Nintendo DSi and Augmented Reality.**
 
-| [ ![Hackaday Featured](https://img.shields.io/badge/Featured%20on-Hackaday-black?style=for-the-badge&logo=hackaday&logoColor=white) ](https://hackaday.com/2026/01/25/augmented-reality-project-utilizes-the-ancient-nintendo-dsi/) |
+| [ ![Hackaday Featured](https://img.shields.io/badge/Featured%20on-Hackaday-yellow?style=for-the-badge&logo=hackaday&logoColor=white) ](https://hackaday.com/2026/01/25/augmented-reality-project-utilizes-the-ancient-nintendo-dsi/) |
 | :--- |
 | **"Sometimes it’s really fun to play with an old console and do weird things with it... We love to see more."** — *Hackaday* |
 
